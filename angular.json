@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "crudApp": {
+    "crud-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "crudApp:build:production"
+              "buildTarget": "crud-app:build:production"
             },
             "development": {
-              "buildTarget": "crudApp:build:development"
+              "buildTarget": "crud-app:build:production"
             }
           },
           "defaultConfiguration": "development"

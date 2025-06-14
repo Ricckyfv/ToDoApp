@@ -1,0 +1,232 @@
+<div class="relative overflow-x-auto bg-gray-500">
+  <table
+    class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+  >
+    <thead
+      class="border-b text-xs text-gray-100 uppercase dark:bg-gray-700 dark:text-gray-400"
+    >
+      <tr>
+        <th scope="col" class="px-6 py-3">Categoria</th>
+        <th scope="col" class="px-6 py-3">Titulo</th>
+        <th scope="col" class="px-6 py-3">Prioridad</th>
+        <th scope="col" class="px-6 py-3">Completado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (task of sortedTasks; track task.id) {
+      <tr
+        class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-gray-300"
+      >
+        <th
+          scope="row"
+          class="px-6 py-4 font-bold text-sm text-white whitespace-nowrap dark:text-white"
+        >
+          {{ task.category | uppercase }}
+        </th>
+        <td class="px-6 py-4">
+          {{ task.title }}
+        </td>
+        <td class="px-6 py-4">
+          <span
+            [ngClass]="{
+              'text-red-500 rounded font-semibold text-sm':
+                task.priority === 'alta',
+              'text-green-500 rounded font-semibold text-sm':
+                task.priority === 'media',
+              'text-blue-500 rounded font-semibold text-sm':
+                task.priority === 'baja'
+            }"
+          >
+            {{ task.priority | titlecase }}
+          </span>
+        </td>
+        <td class="px-6 py-4">
+          {{ task.completed ? "Si" : "No" }}
+        </td>
+        <td class="flex gap-3 px-6 py-4">
+          <a [routerLink]="['/tasks/edit/', task.id]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-edit"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"
+              />
+              <path
+                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"
+              />
+              <path d="M16 5l3 3" />
+            </svg>
+          </a>
+
+          <button (click)="showDueDate(task)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-clock"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M10.5 21h-4.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"
+              />
+              <path d="M16 3v4" />
+              <path d="M8 3v4" />
+              <path d="M4 11h10" />
+              <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+              <path d="M18 16.5v1.5l.5 .5" />
+            </svg>
+          </button>
+
+          <!-- Modal -->
+          <div
+            *ngIf="isModalOpen"
+            id="default-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed top-10 left-0 right-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
+          >
+            <div class="relative p-4 w-full max-w-md">
+              <div class="bg-gray-300 rounded-lg shadow dark:bg-gray-800">
+                <!-- Modal Header -->
+                <div
+                  class="flex justify-between items-center p-4 border-gray-200 dark:border-gray-700"
+                >
+                  <h3
+                    class="text-lg font-semibold text-gray-900 dark:text-white"
+                  >
+                    Fecha y hora de la tarea
+                  </h3>
+                  <button
+                    (click)="closeModal()"
+                    type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="default-modal"
+                  >
+                    <span class="sr-only">Cerrar</span>
+                    ✖
+                  </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-5 text-center">
+                  <div *ngIf="selectedTask?.dueDate; else noDate">
+                    <p class="text-gray-700 dark:text-gray-300 mb-2">
+                      <span class="font-medium">📆 Fecha:</span>
+                      {{ selectedTask?.dueDate | date : "fullDate" }}
+                    </p>
+                    <p class="text-gray-700 dark:text-gray-300">
+                      <span class="font-medium">⏰ Hora:</span>
+                      {{ selectedTask?.dueDate | date : "shortTime" }}
+                    </p>
+                  </div>
+                  <ng-template #noDate>
+                    <p class="text-red-600 dark:text-red-400">
+                      Esta tarea no tiene fecha asignada.
+                    </p>
+                  </ng-template>
+                </div>
+
+                <!-- Modal Footer -->
+                <div
+                  class="flex justify-end items-center p-4 border-gray-200 dark:border-gray-700"
+                >
+                  <button
+                    (click)="closeModal()"
+                    data-modal-hide="default-modal"
+                    type="button"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="delete(task.id)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="icon icon-tabler icons-tabler-filled icon-tabler-square-x"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M19 2h-14a3 3 0 0 0 -3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3 -3v-14a3 3 0 0 0 -3 -3zm-9.387 6.21l.094 .083l2.293 2.292l2.293 -2.292a1 1 0 0 1 1.497 1.32l-.083 .094l-2.292 2.293l2.292 2.293a1 1 0 0 1 -1.32 1.497l-.094 -.083l-2.293 -2.292l-2.293 2.292a1 1 0 0 1 -1.497 -1.32l.083 -.094l2.292 -2.293l-2.292 -2.293a1 1 0 0 1 1.32 -1.497z"
+              />
+            </svg>
+          </button>
+
+          <!-- <a [routerLink]="[]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="icon icon-tabler icons-tabler-filled icon-tabler-square-x"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M19 2h-14a3 3 0 0 0 -3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3 -3v-14a3 3 0 0 0 -3 -3zm-9.387 6.21l.094 .083l2.293 2.292l2.293 -2.292a1 1 0 0 1 1.497 1.32l-.083 .094l-2.292 2.293l2.292 2.293a1 1 0 0 1 -1.32 1.497l-.094 -.083l-2.293 -2.292l-2.293 2.292a1 1 0 0 1 -1.497 -1.32l.083 -.094l2.292 -2.293l-2.292 -2.293a1 1 0 0 1 1.32 -1.497z"
+              />
+            </svg>
+          </a> -->
+        </td>
+      </tr>
+      }@empty {
+      <tr
+        class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-gray-300"
+      >
+        <td colspan="4" class="px-6 py-4 text-center">NO TASKS</td>
+      </tr>
+      }
+      <!-- <tr class=" border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-gray-300">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-300 whitespace-nowrap dark:text-white">
+                    Microsoft Surface Pro
+                </th>
+                <td class="px-6 py-4">
+                    White
+                </td>
+                <td class="px-6 py-4">
+                    Laptop PC
+                </td>
+                <td class="px-6 py-4">
+                    $1999
+                </td>
+            </tr>
+            <tr class="dark:bg-gray-800 text-gray-300">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-300 whitespace-nowrap dark:text-white">
+                    Magic Mouse 2
+                </th>
+                <td class="px-6 py-4">
+                    Black
+                </td>
+                <td class="px-6 py-4">
+                    Accessories
+                </td>
+                <td class="px-6 py-4">
+                    $99
+                </td>
+            </tr> -->
+    </tbody>
+  </table>
+</div>
