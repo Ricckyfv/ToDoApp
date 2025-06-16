@@ -24,12 +24,6 @@ export class TableComponent {
       .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
   }
 
-  constructor() {
-    effect(() => {
-      console.log(this.tasks());
-    });
-  }
-
   delete(id: string) {
     this._taskService
       .delete(id)

@@ -22,13 +22,9 @@ export class AuthService {
     return createUserWithEmailAndPassword(
       this._auth,
       user.email,
-      user.password
+      user.password,
     );
   }
-
-  /*signIn(user: User) {
-    return signInWithEmailAndPassword(this._auth, user.email, user.password);
-  }*/
 
   signIn({ email, password }: { email: string; password: string }) {
     return signInWithEmailAndPassword(this._auth, email, password);

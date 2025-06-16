@@ -31,8 +31,6 @@ export default class TaskFormComponent {
 
   constructor() {
     effect(() => {
-      //console.log(this.idTask());
-
       const id = this.idTask();
       if (id) {
         this.getTask(id);

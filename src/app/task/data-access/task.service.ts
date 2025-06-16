@@ -38,10 +38,6 @@ export class TaskService {
 
   loading = signal(true);
 
-  constructor(){
-    console.log(this._authState.currentUser);
-  }
-
   getTasks = toSignal(
     (
       collectionData(this._query, { idField: 'id' }) as Observable<Task[]>
