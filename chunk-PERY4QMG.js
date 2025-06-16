@@ -1,0 +1,1 @@
+import{Ab as i,k as r,n as e,sb as a,vb as o,xb as n}from"./chunk-BR23CZRW.js";var u=class t{_auth=e(a);get authState$(){return o(this._auth)}get currentUser(){return n().currentUser}logOut(){return i(this._auth)}static \u0275fac=function(c){return new(c||t)};static \u0275prov=r({token:t,factory:t.\u0275fac,providedIn:"root"})};export{u as a};
