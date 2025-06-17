@@ -7,10 +7,12 @@ import { toast } from 'ngx-sonner';
 import { Router, RouterLink } from '@angular/router';
 import { GoogleButtonComponent } from '../../ui/google-button/google-button.component';
 import { AuthStateService } from '../../../shared/data-access/auth-state.service';
+import { updateProfile } from '@angular/fire/auth';
 
 interface FormSignUp {
   email: FormControl<string | null>;
   password: FormControl<string | null>;
+  phone?: FormControl<string | null>;
 }
 
 @Component({
@@ -32,6 +34,10 @@ export default class SignUpComponent {
       Validators.email,
     ]),
     password: this._formBuilder.control('', Validators.required),
+    phone: this._formBuilder.control('', [
+      Validators.required,
+      Validators.pattern(/^\d{9}$/),
+    ]),
   });
 
   isRequired(field: 'email' | 'password') {
@@ -46,9 +52,9 @@ export default class SignUpComponent {
     if (this.form.invalid) return;
 
     try {
-      const { email, password } = this.form.value;
+      const { email, password, phone } = this.form.value;
 
-      if (!email || !password) return;
+      if (!email || !password || !phone) return;
 
       await this._authService.signUp({
         email,
