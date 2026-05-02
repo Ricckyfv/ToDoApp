@@ -5,6 +5,7 @@ import {
   signInWithEmailAndPassword,
   signInWithRedirect,
   GoogleAuthProvider,
+  getRedirectResult
 } from '@angular/fire/auth';
 
 export interface User {
@@ -36,5 +37,21 @@ export class AuthService {
     const providerGoogle = new GoogleAuthProvider();
 
     return signInWithRedirect(this._auth, providerGoogle);
+  }
+
+  async checkRedirect() {
+    try {
+      // Firebase revisa si la página se cargó porque Google nos devolvió aquí
+      const result = await getRedirectResult(this._auth);
+
+      if (result && result.user) {
+        // Si hay un usuario, significa que el login por redirección fue un éxito
+        return true;
+      }
+      return false; // No venimos de una redirección o no hay usuario
+    } catch (error) {
+      console.error('Error al procesar la redirección de Google:', error);
+      return false;
+    }
   }
 }

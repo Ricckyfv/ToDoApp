@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -23,7 +23,7 @@ interface FormSignIn {
   templateUrl: './sign-in.component.html',
   styles: ``,
 })
-export default class SignInComponent {
+export default class SignInComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _router = inject(Router);
@@ -35,6 +35,18 @@ export default class SignInComponent {
     ]),
     password: this._formBuilder.control('', Validators.required),
   });
+
+  // 1. ngOnInit se ejecuta automáticamente al abrir la página de Login
+  async ngOnInit() {
+    // Le preguntamos al servicio si acabamos de regresar de Google
+    const loginExitoso = await this._authService.checkRedirect();
+
+    if (loginExitoso) {
+      // Si fue exitoso, lo sacamos de la pantalla de login y lo mandamos a la app
+      // Cambia '/home' por la ruta principal de tu aplicación de tareas
+      this._router.navigate(['/tasks']);
+    }
+  }
 
   isRequired(field: 'email' | 'password') {
     return isRequired(field, this.form);
@@ -72,6 +84,7 @@ export default class SignInComponent {
       this._router.navigateByUrl('/tasks');
     } catch (error) {
       toast.error('Error. Intentalo mas tarde.');
+      console.error('Error técnico de Firebase al loguear:', error);
     }
   }
 }
