@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword,
   signInWithRedirect,
   GoogleAuthProvider,
-  getRedirectResult
+  getRedirectResult,
+  authState
 } from '@angular/fire/auth';
 
 export interface User {
@@ -20,6 +21,7 @@ export interface User {
 })
 export class AuthService {
   private _auth = inject(Auth);
+  public authState$ = authState(this._auth);
 
   signUp(user: User) {
     return createUserWithEmailAndPassword(

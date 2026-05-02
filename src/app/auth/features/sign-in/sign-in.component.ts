@@ -38,14 +38,20 @@ export default class SignInComponent implements OnInit {
 
   // 1. ngOnInit se ejecuta automáticamente al abrir la página de Login
   async ngOnInit() {
-    // Le preguntamos al servicio si acabamos de regresar de Google
-    const loginExitoso = await this._authService.checkRedirect();
+    this._authService.authState$.subscribe((user) => {
+      if (user) {
+        // ¡El usuario está logueado! Lo enviamos a sus tareas.
+        this._router.navigate(['/tasks']);
+      }
+    });
+    // // Le preguntamos al servicio si acabamos de regresar de Google
+    // const loginExitoso = await this._authService.checkRedirect();
 
-    if (loginExitoso) {
-      // Si fue exitoso, lo sacamos de la pantalla de login y lo mandamos a la app
-      // Cambia '/home' por la ruta principal de tu aplicación de tareas
-      this._router.navigate(['/tasks']);
-    }
+    // if (loginExitoso) {
+    //   // Si fue exitoso, lo sacamos de la pantalla de login y lo mandamos a la app
+    //   // Cambia '/home' por la ruta principal de tu aplicación de tareas
+    //   this._router.navigate(['/tasks']);
+    // }
   }
 
   isRequired(field: 'email' | 'password') {
