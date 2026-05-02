@@ -39,34 +39,12 @@ export default class SignInComponent implements OnInit {
 
   // 1. ngOnInit se ejecuta automáticamente al abrir la página de Login
   async ngOnInit() {
-
-    console.log('1. Iniciando pantalla de Login...');
-
-    // A. Nos suscribimos al estado de Firebase
+    // Si el usuario entra a la pantalla de login pero ya estaba logueado, lo mandamos a tareas
     this._authService.authState$.subscribe((user) => {
-      console.log('2. Estado de autenticación detectado:', user ? user.email : 'Ningún usuario activo');
-
       if (user) {
-        // Obligamos a Angular a ejecutar esta navegación dentro de su ciclo de actualización
-        this._zone.run(() => {
-          console.log('3. Redirigiendo a /tasks mediante authState$...');
-          this._router.navigate(['/tasks']);
-        });
+        this._router.navigate(['/tasks']);
       }
     });
-
-    console.log('4. Revisando si Google nos devolvió una redirección...');
-    // B. Procesamos el resultado de la redirección
-    const loginExitoso = await this._authService.checkRedirect();
-    console.log('5. Resultado de checkRedirect:', loginExitoso);
-
-    if (loginExitoso) {
-      // Si checkRedirect es exitoso, también forzamos la navegación
-      this._zone.run(() => {
-        console.log('6. Redirigiendo a /tasks mediante checkRedirect...');
-        this._router.navigate(['/tasks']);
-      });
-    }
 
   }
 
