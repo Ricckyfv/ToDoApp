@@ -3,7 +3,7 @@ import {
   Auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup, //sirve para logearse con algun proveedor como Google, GitHub, etc.
+  signInWithRedirect,
   GoogleAuthProvider,
 } from '@angular/fire/auth';
 
@@ -32,9 +32,9 @@ export class AuthService {
     return signInWithEmailAndPassword(this._auth, email, password);
   }
 
-  signInWitGoogle() {
+  signInWithGoogle() {
     const providerGoogle = new GoogleAuthProvider();
 
-    return signInWithPopup(this._auth, providerGoogle);
+    return signInWithRedirect(this._auth, providerGoogle);
   }
 }
