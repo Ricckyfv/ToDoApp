@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, NgZone, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -27,6 +27,7 @@ export default class SignInComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _router = inject(Router);
+  private _zone = inject(NgZone);
 
   form = this._formBuilder.group<FormSignIn>({
     email: this._formBuilder.control('', [
@@ -38,20 +39,16 @@ export default class SignInComponent implements OnInit {
 
   // 1. ngOnInit se ejecuta automáticamente al abrir la página de Login
   async ngOnInit() {
+
     this._authService.authState$.subscribe((user) => {
       if (user) {
         // ¡El usuario está logueado! Lo enviamos a sus tareas.
         this._router.navigate(['/tasks']);
       }
     });
-    // // Le preguntamos al servicio si acabamos de regresar de Google
-    // const loginExitoso = await this._authService.checkRedirect();
 
-    // if (loginExitoso) {
-    //   // Si fue exitoso, lo sacamos de la pantalla de login y lo mandamos a la app
-    //   // Cambia '/home' por la ruta principal de tu aplicación de tareas
-    //   this._router.navigate(['/tasks']);
-    // }
+    await this._authService.checkRedirect();
+
   }
 
   isRequired(field: 'email' | 'password') {
